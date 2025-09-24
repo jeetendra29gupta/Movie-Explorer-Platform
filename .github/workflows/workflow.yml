@@ -1,4 +1,4 @@
-name: Backend CI Pipeline
+name: CI Pipeline for Backend & Frontend
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  test_and_lint:
+  backend_test_and_lint:
     runs-on: ubuntu-latest
 
     steps:
@@ -38,9 +38,9 @@ jobs:
           cd backend
           flake8 app/ tests/ --max-line-length 90
 
-  docker_build_and_health_check:
+  backend_docker_build_and_health_check:
     runs-on: ubuntu-latest
-    needs: test_and_lint
+    needs: backend_test_and_lint
 
     steps:
       - name: Checkout repository
@@ -65,3 +65,28 @@ jobs:
 
           curl --fail -w "\n" http://localhost:8181
           echo "Movies Explorer Backend Service Running..."
+
+  frontend_test_docker_build_and_health_check:
+    runs-on: ubuntu-latest
+    needs: backend_docker_build_and_health_check
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build the Docker image
+        run: |
+          cd frontend
+          docker build -t movie-explorer-frontend -f Dockerfile .
+
+      - name: Run the Docker container
+        run: |
+          cd backend
+          docker run -d --name movie-explorer-frontend -p 9191:9191 movie-explorer-backend
+
+      - name: Health Check
+        run: |
+          sleep 5
+
+          curl --fail -w "\n" http://localhost:9191
+          echo "Movies Explorer Frontend Service Running..."
