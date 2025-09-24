@@ -82,7 +82,7 @@ jobs:
       - name: Run the Docker container
         run: |
           cd backend
-          docker run -d --name movie-explorer-frontend -p 9191:9191 movie-explorer-backend
+          docker run -d --name movie-explorer-frontend -p 9191:9191 movie-explorer-frontend
 
       - name: Health Check
         run: |
