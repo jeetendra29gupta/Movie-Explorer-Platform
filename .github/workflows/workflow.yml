@@ -1,0 +1,67 @@
+name: Backend CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test_and_lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies from requirements.txt and requirements-dev.txt
+        run: |
+          cd backend
+          pip install -r requirements-dev.txt
+
+      - name: Run Pytest
+        run: |
+          cd backend
+          pytest
+
+      - name: Check formatting with black
+        run: |
+          cd backend
+          black app/ tests/ --check --line-length 90
+
+      - name: Lint with flake8
+        run: |
+          cd backend
+          flake8 app/ tests/ --max-line-length 90
+
+  docker_build_and_health_check:
+    runs-on: ubuntu-latest
+    needs: test_and_lint
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build the Docker image
+        run: |
+          cd backend
+          docker build -t movie-explorer-backend -f Dockerfile .
+
+      - name: Run the Docker container
+        run: |
+          cd backend
+          docker run -d --name movie-explorer-backend -p 8181:8181 movie-explorer-backend
+
+      - name: Health Check
+        run: |
+          sleep 5
+
+          curl --fail -w "\n" http://localhost:8181/health
+          echo "Health check passed!"
+
+          curl --fail -w "\n" http://localhost:8181
+          echo "Movies Explorer Backend Service Running..."

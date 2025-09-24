@@ -1,0 +1,32 @@
+# Python cache and compiled files
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyo
+
+# Pytest cache
+.pytest_cache/
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# IDEs/editors
+.idea/
+.vscode/
+
+# Build files
+*.egg-info/
+dist/
+build/
+
+# macOS and Windows system files
+.DS_Store
+Thumbs.db
+
+NOTEBOOK.txt
+*.db
+*.log
+*node_modules*
+package-lock.json
