@@ -21,7 +21,7 @@
     docker build -t movie-explorer-frontend ./frontend
     docker run -d -p 9191:9191 --name movie-explorer-frontend movie-explorer-frontend
     ```
-   
+
 4. **Access the API**
    > - Visit [http://localhost:8181/](http://localhost:8181/) for a welcome message.
    > - API docs available at [http://localhost:8181/docs](http://localhost:8181/docs)
